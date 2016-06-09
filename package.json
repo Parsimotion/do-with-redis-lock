@@ -1,0 +1,19 @@
+{
+  "name": "do-with-redis-lock",
+  "description": "Promisified behavior locking with Redis",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Parsimotion/do-with-redis-lock.git"
+  },
+  "version": "1.0.1",
+  "main": "src/doWithRedisLock.coffee",
+  "dependencies": {
+    "bluebird": "^3.4.0",
+    "ioredis": "^2.0.1",
+    "lodash": "^4.13.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {}
+}
