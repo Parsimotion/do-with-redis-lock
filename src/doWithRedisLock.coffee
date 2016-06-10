@@ -13,10 +13,12 @@ module.exports = (getPromise, key, expire = 120) ->
 
   new Promise (resolve, reject) ->
     redis().set key, "locked", "EX", expire, "NX", (err, created) ->
-      return reject("concurrency_conflict") if err? or not created?
+      return reject "concurrency_conflict" if err? or not created?
+
       getPromise()
       .then (response) ->
-        resolve(response)
+        resolve response
       .catch (err) ->
-        redis.del key
         reject err
+      .finally ->
+        redis.del key
