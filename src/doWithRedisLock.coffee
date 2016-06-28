@@ -11,8 +11,9 @@ redis = _.once -> new Redis
 
 module.exports = (getPromise, key, expire = 120) ->
 
+  client = redis()
   new Promise (resolve, reject) ->
-    redis().set key, "locked", "EX", expire, "NX", (err, created) ->
+    client.set key, "locked", "EX", expire, "NX", (err, created) ->
       return reject "concurrency_conflict" if err? or not created?
 
       getPromise()
@@ -21,4 +22,4 @@ module.exports = (getPromise, key, expire = 120) ->
       .catch (err) ->
         reject err
       .finally ->
-        redis.del key
+        client.del key
