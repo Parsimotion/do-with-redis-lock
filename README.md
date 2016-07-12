@@ -19,7 +19,7 @@ doWithLock(action, key).then (result) ->
   # continue...
 ```
 
-If something is wrong, the *Promise* is rejected with:
+If a concurrency problem appears, the *Promise* is rejected with:
 ```js
 {
   statusCode: 503,
