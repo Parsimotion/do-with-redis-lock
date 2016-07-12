@@ -14,7 +14,12 @@ module.exports = (getPromise, key, expire = 120) ->
   client = redis()
   new Promise (resolve, reject) ->
     client.set key, "locked", "EX", expire, "NX", (err, created) ->
-      return reject "concurrency_conflict" if err? or not created?
+      if err? or not created?
+        return reject
+          statusCode: 503
+          body:
+            code: "concurrency_conflict"
+            message: "Somebody is doing this at the same time at you"
 
       getPromise()
       .then (response) ->
