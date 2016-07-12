@@ -15,11 +15,17 @@ doWithLock = require("do-with-redis-lock")
 action = ->
   request.getAsync(...) # something that returns a Promise
 
-doWithLock(action, key)
-  .then (result) ->
-    # all is good
-  .catch (e) ->
-    if (e is "concurrency_conflict")
-      # handle error
-    # other bad thing happened
+doWithLock(action, key).then (result) ->
+  # continue...
+```
+
+If something is wrong, the *Promise* is rejected with:
+```js
+{
+  statusCode: 503,
+  body: {
+    code: "concurrency_conflict",
+    message: "Somebody is doing this at the same time at you"
+  }
+}
 ```
