@@ -33,4 +33,4 @@ If a concurrency problem appears, the *Promise* is rejected with:
 ## migration
 
 ### 1.x users
-In 2.x, the *Promise*'s rejection reason isn't `"concurrency_conflict"` anymore. See above.
+- In 2.x, the *Promise*'s rejection reason isn't `"concurrency_conflict"` anymore. See above.

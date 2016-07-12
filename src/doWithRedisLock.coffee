@@ -9,7 +9,13 @@ redis = _.once -> new Redis
   password: process.env.REDIS_AUTH
   db: process.env.REDIS_DB or 1
 
+redisIsConfigured = ->
+  process.env.REDIS_PORT? and
+  process.env.REDIS_HOST? and
+  process.env.REDIS_AUTH?
+
 module.exports = (getPromise, key, expire = 120) ->
+  return getPromise() if not redisIsConfigured()
 
   client = redis()
   new Promise (resolve, reject) ->
