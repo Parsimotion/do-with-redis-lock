@@ -6,7 +6,7 @@
     "url": "git://github.com/Parsimotion/do-with-redis-lock.git"
   },
   "version": "2.1.0",
-  "main": "src/doWithRedisLock.coffee",
+  "main": "lib/doWithRedisLock.js",
   "dependencies": {
     "bluebird": "^3.4.0",
     "ioredis": "^2.0.1",
@@ -21,6 +21,11 @@
   },
   "devDependencies": {
     "coffee-script": "^1.12.7",
+    "grunt": "^1.0.1",
+    "grunt-bump": "^0.8.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-coffee": "^2.0.0",
+    "grunt-mocha-test": "^0.13.3",
     "mocha": "^4.0.1",
     "should": "^13.2.0",
     "sinon": "^4.1.3"
