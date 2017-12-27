@@ -10,10 +10,19 @@
   "dependencies": {
     "bluebird": "^3.4.0",
     "ioredis": "^2.0.1",
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "redlock": "^3.1.0"
   },
   "engines": {
     "node": ">=0.10.0"
   },
-  "scripts": {}
+  "scripts": {
+    "test": "find ./ -name '*.spec.coffee' | xargs ./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register -R spec"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.12.7",
+    "mocha": "^4.0.1",
+    "should": "^13.2.0",
+    "sinon": "^4.1.3"
+  }
 }
