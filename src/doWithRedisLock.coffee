@@ -35,4 +35,4 @@ connected = () ->
 
 actualState = if redisIsConfigured() then connected() else disconnected()
 
-module.exports = (command, key, expire = 120) -> actualState.execute command, key, expire
+module.exports = (command, key, expire = 120) -> actualState.execute command, key, expire * 1000
