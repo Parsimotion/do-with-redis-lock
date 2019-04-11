@@ -22,8 +22,8 @@ redisIsConfigured = ->
 disconnected = ->
   execute: (command) -> command()
 
-connected = () ->
-  redlock =  new Redlock [ redis() ], retryCount: 0
+connected = (options) ->
+  redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
   execute: (command, key, expire) ->
     Promise.using redlock.disposer(key, expire), (lock) -> command()
     .catch LockError, ->
@@ -33,6 +33,7 @@ connected = () ->
           code: "concurrency_conflict"
           message: "Somebody is doing this at the same time at you"
 
-actualState = if redisIsConfigured() then connected() else disconnected()
 
-module.exports = (command, key, expire = 120) -> actualState.execute command, key, expire * 1000
+module.exports = (command, key, expire = 120, options = {}) ->
+  actualState = if redisIsConfigured() then connected(options) else disconnected()
+  actualState.execute command, key, expire * 1000
