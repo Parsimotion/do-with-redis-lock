@@ -2,6 +2,7 @@ _ = require "lodash"
 Promise = require "bluebird"
 Redis = require "ioredis"
 Redlock = require "redlock"
+debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
 
 redis = ->
@@ -27,8 +28,9 @@ connected = (options) ->
   execute: (command, key, expire) ->
     Promise.using redlock.disposer(key, expire), (lock) -> command()
     .catch LockError, ->
+      debug "locked resource #{ key }"
       throw
-        statusCode: 503
+        statusCode: options.lockedStatusCode or 503
         body:
           code: "concurrency_conflict"
           message: "Somebody is doing this at the same time at you"
