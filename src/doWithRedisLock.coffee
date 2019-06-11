@@ -5,7 +5,7 @@ Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
 
-redis = ->
+redis = _.once ->
   Promise.promisifyAll(
     new Redis
       port: process.env.REDIS_PORT
