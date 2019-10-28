@@ -2,17 +2,17 @@ _ = require "lodash"
 Promise = require "bluebird"
 should = require "should"
 
-_.assign process.env, {
-  REDIS_PORT: 6379
-  REDIS_HOST: "localhost"
-  REDIS_AUTH: ""
+redisConn = {
+  port: 6379
+  host: "localhost"
+  auth: ""
 }
 
 KEY = "aKey"
 
 describe "#doWithRedisLock", ->
 
-  doWithRedisLock = require "./doWithRedisLock"
+  doWithRedisLock = (require "./doWithRedisLock")(redisConn)
   doSomeWithLock = (options) -> doWithRedisLock _.constant(Promise.resolve().delay(500)), KEY, 120, options
 
   it "should execute a command", ->

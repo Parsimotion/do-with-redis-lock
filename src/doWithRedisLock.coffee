@@ -34,7 +34,7 @@ connected = (connection, options) ->
         body:
           code: "concurrency_conflict"
           message: "Somebody is doing this at the same time at you"
-
+  
 
 module.exports = (connection) -> (command, key, expire = 120, options = {}) ->
   actualState = if connection? and redisIsConfigured(connection) then connected(connection, options) else disconnected()
