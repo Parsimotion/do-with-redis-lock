@@ -4,9 +4,10 @@ Redis = require "ioredis"
 Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
+redis = null
 
-redis = ({ port, host, auth, db }) ->
-  Promise.promisifyAll(
+setRedis = ({ port, host, auth, db }) ->
+  redis = -> Promise.promisifyAll(
     new Redis
       port: port
       host: host
@@ -23,8 +24,8 @@ redisIsConfigured = ({ port, host, auth }) ->
 disconnected = ->
   execute: -> throw new Error "Missing connection credentials"
 
-connected = (connection, options) ->
-  redlock =  new Redlock [ redis(connection) ], _.merge({ retryCount: 0 }, options)
+connected = (options) ->
+  redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
   execute: (command, key, expire) ->
     Promise.using redlock.disposer(key, expire), (lock) -> command()
     .catch LockError, ->
@@ -36,6 +37,7 @@ connected = (connection, options) ->
           message: "Somebody is doing this at the same time at you"
   
 
-module.exports = (connection) -> (command, key, expire = 120, options = {}) ->
-  actualState = if connection? and redisIsConfigured(connection) then connected(connection, options) else disconnected()
-  actualState.execute command, key, expire * 1000
+module.exports = (connection) -> 
+  if connection? and redisIsConfigured(connection) then setRedis(connection) else throw new Error "Missing connection credentials"
+  (command, key, expire = 120, options = {}) ->
+    connected(options).execute command, key, expire * 1000
