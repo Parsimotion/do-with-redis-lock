@@ -4,10 +4,9 @@ Redis = require "ioredis"
 Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
-redis = null
 
 setRedis = ({ port, host, auth, db }) ->
-  redis = -> Promise.promisifyAll(
+  () -> Promise.promisifyAll(
     new Redis
       port: port
       host: host
@@ -21,10 +20,7 @@ redisIsConfigured = ({ port, host, auth }) ->
   host? and
   auth?
 
-disconnected = ->
-  execute: -> throw new Error "Missing connection credentials"
-
-connected = (options) ->
+connected = (redis, options) ->
   redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
   execute: (command, key, expire) ->
     Promise.using redlock.disposer(key, expire), (lock) -> command()
@@ -38,6 +34,6 @@ connected = (options) ->
   
 
 module.exports = (connection) -> 
-  if connection? and redisIsConfigured(connection) then setRedis(connection) else throw new Error "Missing connection credentials"
+  if connection? and redisIsConfigured(connection) then redis = setRedis(connection) else throw new Error "Missing connection credentials"
   (command, key, expire = 120, options = {}) ->
-    connected(options).execute command, key, expire * 1000
+    connected(redis, options).execute command, key, expire * 1000
