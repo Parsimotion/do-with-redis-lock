@@ -5,25 +5,22 @@ Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
 
-redis = _.once ->
-  Promise.promisifyAll(
+setRedis = ({ port, host, auth, db }) ->
+  () -> Promise.promisifyAll(
     new Redis
-      port: process.env.REDIS_PORT
-      host: process.env.REDIS_HOST
+      port: port
+      host: host
       family: 4
-      password: process.env.REDIS_AUTH
-      db: process.env.REDIS_DB or 1
+      password: auth
+      db: db or 1
   )
 
-redisIsConfigured = ->
-  process.env.REDIS_PORT? and
-  process.env.REDIS_HOST? and
-  process.env.REDIS_AUTH?
+redisIsConfigured = ({ port, host, auth }) ->
+  port? and
+  host? and
+  auth?
 
-disconnected = ->
-  execute: (command) -> command()
-
-connected = (options) ->
+connected = (redis, options) ->
   redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
   execute: (command, key, expire) ->
     Promise.using redlock.disposer(key, expire), (lock) -> command()
@@ -34,8 +31,9 @@ connected = (options) ->
         body:
           code: "concurrency_conflict"
           message: "Somebody is doing this at the same time at you"
+  
 
-
-module.exports = (command, key, expire = 120, options = {}) ->
-  actualState = if redisIsConfigured() then connected(options) else disconnected()
-  actualState.execute command, key, expire * 1000
+module.exports = (connection) -> 
+  if connection? and redisIsConfigured(connection) then redis = setRedis(connection) else throw new Error "Missing connection credentials"
+  (command, key, expire = 120, options = {}) ->
+    connected(redis, options).execute command, key, expire * 1000
