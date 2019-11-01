@@ -12,7 +12,7 @@ KEY = "aKey"
 
 describe "#doWithRedisLock", ->
 
-  doWithRedisLock = (require "./doWithRedisLock")(redisConn)
+  doWithRedisLock = require("./doWithRedisLock")(redisConn)
   doSomeWithLock = (options) -> doWithRedisLock _.constant(Promise.resolve().delay(500)), KEY, 120, options
 
   it "should execute a command", ->
