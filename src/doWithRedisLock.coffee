@@ -5,7 +5,7 @@ Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
 
-setRedis = ({ port, host, auth, db }) ->
+setRedis = ({ port, host, auth, db, connectionName }) ->
   _.once -> Promise.promisifyAll(
     new Redis
       port: port
@@ -13,6 +13,7 @@ setRedis = ({ port, host, auth, db }) ->
       family: 4
       password: auth
       db: db or 1
+      connectionName: connectionName
   )
 
 redisIsConfigured = ({ port, host, auth }) ->

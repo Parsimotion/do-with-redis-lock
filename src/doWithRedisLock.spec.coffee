@@ -6,6 +6,7 @@ redisConn = {
   port: 6379
   host: "localhost"
   auth: ""
+  connectionName: "anita"
 }
 
 KEY = "aKey"
