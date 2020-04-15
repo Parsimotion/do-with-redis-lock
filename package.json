@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/Parsimotion/do-with-redis-lock.git"
   },
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "lib/doWithRedisLock.js",
   "dependencies": {
     "bluebird": "^3.4.0",
