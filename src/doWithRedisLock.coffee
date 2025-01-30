@@ -27,6 +27,7 @@ connected = (redis, options) ->
         body:
           code: "concurrency_conflict"
           message: "Somebody is doing this at the same time at you"
+    .finally -> redlock.quit() if options.disconnect
   
 
 module.exports = (connection) -> 
