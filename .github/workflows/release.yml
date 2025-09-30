@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - test/**
   workflow_dispatch:
     inputs:
       prereleaseTag:
@@ -20,6 +21,7 @@ jobs:
       prereleaseTag: ${{ inputs.prereleaseTag }}
       build-output-dir: "lib"
       node-version: "18"
+      test: true
     secrets:
       NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
     permissions:
