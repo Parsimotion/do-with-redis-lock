@@ -11,10 +11,8 @@ setRedis = ({ port, host, auth, db, connectionName, redisClient }) ->
    )
   _.memoize redisGetter, JSON.stringify
 
-redisIsConfigured = ({ port, host, auth }) ->
-  port? and
-  host? and
-  auth?
+redisIsConfigured = ({ port, host, auth, redisClient }) ->
+  redisClient? or ( port? and host? and auth? )
 
 connected = (redis, options) ->
   redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
