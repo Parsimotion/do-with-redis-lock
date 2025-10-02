@@ -5,16 +5,14 @@ Redlock = require "redlock"
 debug = require("debug") "do-with-redis-lock"
 LockError = Redlock.LockError
 
-setRedis = ({ port, host, auth, db, connectionName }) ->
+setRedis = ({ port, host, auth, db, connectionName, redisClient }) ->
   redisGetter = -> Promise.promisifyAll(
-    new Redis { port, host, connectionName, family: 4, password: auth, db: db or 1 }
+    if redisClient then redisClient else new Redis { port, host, connectionName, family: 4, password: auth, db: db or 1 }
    )
   _.memoize redisGetter, JSON.stringify
 
-redisIsConfigured = ({ port, host, auth }) ->
-  port? and
-  host? and
-  auth?
+redisIsConfigured = ({ port, host, auth, redisClient }) ->
+  redisClient? or ( port? and host? and auth? )
 
 connected = (redis, options) ->
   redlock =  new Redlock [ redis() ], _.merge({ retryCount: 0 }, options)
