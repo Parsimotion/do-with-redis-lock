@@ -40,3 +40,7 @@ jspm_packages
 lib
 
 do-with-redis-lock.sublime-workspace
+
+site.config
+*.env
+*.env.*
